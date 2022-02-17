@@ -1,6 +1,37 @@
 import {useEffect} from "react";
-const Mask = ({data,canvasProps}) => {
 
+function init(content) {
+  let rows1 = ['']
+  let index1 = 0
+  for (let i = 0; i < content.length; i++) {
+    if (content[i] ==='\n'){
+      index1+=1
+      rows1.push('')
+    } else {
+      rows1[index1] +=content[i]
+    }
+  }
+  const max = Math.max(...rows1.map(item=>item.length))
+  const maxIndex = rows1.map(item=>item.length).findIndex(item=>item===max)
+  // @ts-ignore
+  const unitWidth = document.getElementsByClassName(' CodeMirror-line')[maxIndex].children[0].offsetWidth / max
+  // @ts-ignore
+  const unitHeight = document.getElementsByClassName('CodeMirror-line')[0].offsetHeight
+  // @ts-ignore
+  const positionLeft = document.getElementsByClassName('CodeMirror-linenumber')[0].offsetWidth + 4
+  const positionTop = 4
+
+  return {
+    unitWidth,unitHeight,positionLeft,positionTop
+  }
+}
+
+const Mask = ({data,canvasProps}) => {
+  const content = data.fileDetail.content
+  // 初始化
+  const {
+    unitWidth,unitHeight,positionLeft,positionTop
+  } = init(content)
   useEffect(()=>{
     if (data.fileCoverage.path){
       const file = data
@@ -53,19 +84,19 @@ const Mask = ({data,canvasProps}) => {
           }
         }
         const newMarks = []
-        for (let xxx = 0; xxx < marks.length; xxx++) {
-          if (marks[xxx].start[1]<marks[xxx].end[1]){
+        for (let mark = 0; mark < marks.length; mark++) {
+          if (marks[mark].start[1]<marks[mark].end[1]){
             // 开始
-            const startX = marks[xxx].start[0]
-            const startY = marks[xxx].start[1]
+            const startX = marks[mark].start[0]
+            const startY = marks[mark].start[1]
             const startRowLen = rows[startY].length - 1
             newMarks.push({
               start: [startX,startY],
               end: [startRowLen,startY]
             })
             // 结束
-            const endX = marks[xxx].end[0]
-            const endY = marks[xxx].end[1]
+            const endX = marks[mark].end[0]
+            const endY = marks[mark].end[1]
             newMarks.push({
               start: [0,endY],
               end: [endX,endY]
@@ -80,14 +111,12 @@ const Mask = ({data,canvasProps}) => {
               })
             }
           } else {
-            newMarks.push(marks[xxx])
+            newMarks.push(marks[mark])
           }
         }
         return newMarks
       }
       // 参数 content
-      const content = file.fileDetail.content
-      // marks
       let marks = originalMarksFn
       var canvas:any = document.getElementById('cavsElem');
       console.log(canvas,'canvas')
@@ -98,17 +127,17 @@ const Mask = ({data,canvasProps}) => {
       const newMarks1 = convertToRectangularDataFormatOfSketchpad(content,originalMarksStatement)
       for (let i = 0; i < newMarks1.length; i++) {
         ctx.fillStyle = 'pink';
-        ctx.fillRect((newMarks1[i].start[0]) * 8.63,newMarks1[i].start[1] * 22,8.63 * (newMarks1[i].end[0] - newMarks1[i].start[0]),22);
+        ctx.fillRect((newMarks1[i].start[0]) * unitWidth,newMarks1[i].start[1] * unitHeight,unitWidth * (newMarks1[i].end[0] - newMarks1[i].start[0]),unitHeight);
       }
 
       const newMarks = convertToRectangularDataFormatOfSketchpad(content,marks)
       for (let i = 0; i < newMarks.length; i++) {
         ctx.fillStyle = 'red';
-        ctx.fillRect((newMarks[i].start[0]) * 8.63,newMarks[i].start[1] * 22,8.63 * (newMarks[i].end[0] - newMarks[i].start[0]),22);
+        ctx.fillRect((newMarks[i].start[0]) * unitWidth,newMarks[i].start[1] * unitHeight,unitWidth * (newMarks[i].end[0] - newMarks[i].start[0]),unitHeight);
       }
     }
   },[data.fileCoverage])
-  return <div className={'mark'}>
+  return <div className={'mark'} style={{left:positionLeft+'px',top:positionTop+'px'}}>
     <canvas id={'cavsElem'} style={{opacity:'1'}}>
       你的浏览器不支持canvas，请升级浏览器
     </canvas>

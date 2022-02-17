@@ -96,6 +96,8 @@ function CoreFn({fileCoverage,fileDetail} ) {
 const EditorDetail:FC<IProps> = (props) => {
   const {fileCoverage,fileDetail} = props
   const {maxWidth,maskCanvasProps,rows,times} = CoreFn({fileCoverage,fileDetail})
+  const [showMask,setShowMask] = useState(false)
+
   useEffect(() => {
     if (fileCoverage.path){
       const postfix = fileDetail?.fileName?.split('.').reverse()[0]
@@ -116,6 +118,9 @@ const EditorDetail:FC<IProps> = (props) => {
         });
         myCodeMirror.setSize('auto', 'auto');
         myCodeMirror.setOption("readOnly", 'nocursor');
+        setTimeout(()=>{
+          setShowMask(true)
+        },100)
       }
     }
   }, [fileCoverage])
@@ -129,7 +134,12 @@ const EditorDetail:FC<IProps> = (props) => {
       </div>
       <div style={{position:'relative'}}>
         <div id={'codemirror-editor'}/>
-        <Mask canvasProps={{width:maskCanvasProps.width,height:maskCanvasProps.height}} data={{fileDetail,fileCoverage}}/>
+        {
+          showMask?<Mask canvasProps={{
+            width:maskCanvasProps.width,
+            height:maskCanvasProps.height,
+          }} data={{fileDetail,fileCoverage}}/>:null
+        }
       </div>
     </div>
   </div>
