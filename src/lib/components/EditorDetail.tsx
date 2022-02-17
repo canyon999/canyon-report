@@ -118,6 +118,7 @@ const EditorDetail:FC<IProps> = (props) => {
         });
         myCodeMirror.setSize('auto', 'auto');
         myCodeMirror.setOption("readOnly", 'nocursor');
+        setShowMask(false)
         setTimeout(()=>{
           setShowMask(true)
         },100)
