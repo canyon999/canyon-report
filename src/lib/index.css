@@ -1,0 +1,71 @@
+.coverage-report{
+  display: flex;
+}
+
+.coverage-report #codemirror-editor{
+  /*font-size: 14px;*/
+  /*line-height: 1.5;*/
+  position: relative;
+  z-index: 10;
+}
+
+.coverage-report #codemirror-editor .CodeMirror {
+  background: none;
+}
+
+.coverage-report #codemirror-editor .noStatementBranch{
+  background-color: red;
+}
+.coverage-report #codemirror-editor .noStatement{
+  background-color: #F6C6CE;
+}
+.coverage-report #codemirror-editor .noFn{
+  background-color: red;
+}
+
+.coverage-report .tree-file-dir{
+  border: 1px solid #f0f0f0;
+  width: 260px;
+  /*overflow-y: hidden;*/
+  overflow-x: scroll;
+  flex-shrink:0;
+}
+
+
+.coverage-report .right-detail{
+  border: 1px solid #f0f0f0;
+  border-left: none;
+  flex: 1;
+  flex-shrink:0;
+  width: 100%;
+}
+
+
+.coverage-report .cline-any{
+  color: rgba(0,0,0,.5);
+  /*background-color: rgb(234,234,234);*/
+  height: 100%;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.coverage-report .cline-yes{
+  background-color: rgb(230,245,208);
+}
+
+.coverage-report .cline-no{
+  background-color: #FCE1E5;
+}
+
+
+
+.mark{
+  top: 4px;
+  left: 39px;
+  position: absolute;
+  z-index: 1;
+}
+
+.cavsElem{
+
+}
