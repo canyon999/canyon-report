@@ -14,7 +14,7 @@ function init(content) {
   const max = Math.max(...rows1.map(item=>item.length))
   const maxIndex = rows1.map(item=>item.length).findIndex(item=>item===max)
   // @ts-ignore
-  const unitWidth = document.getElementsByClassName(' CodeMirror-line')[maxIndex].children[0].offsetWidth / max
+  const unitWidth = (document.getElementsByClassName(' CodeMirror-line')[maxIndex]?.children[0].offsetWidth || 0) / max
   // @ts-ignore
   const unitHeight = document.getElementsByClassName('CodeMirror-line')[0].offsetHeight
   // @ts-ignore
@@ -26,7 +26,7 @@ function init(content) {
   }
 }
 
-const Mask = ({data,canvasProps}) => {
+const Mask = ({data,edMaxWidth,rows}) => {
   const content = data.fileDetail.content
   // 初始化
   const {
@@ -118,12 +118,12 @@ const Mask = ({data,canvasProps}) => {
       }
       // 参数 content
       let marks = originalMarksFn
-      var canvas:any = document.getElementById('cavsElem');
+      var canvas:any = document.getElementById('canvas');
       console.log(canvas,'canvas')
       var ctx = canvas.getContext('2d');
-      canvas.width = canvasProps.width;
-      canvas.height = canvasProps.height;
-      // canvas.style.border = '1px solid red';
+      canvas.width = edMaxWidth * unitWidth;
+      canvas.height = rows.length * unitHeight;
+      // canvas.style.border = '1px dashed #999';
       const newMarks1 = convertToRectangularDataFormatOfSketchpad(content,originalMarksStatement)
       for (let i = 0; i < newMarks1.length; i++) {
         ctx.fillStyle = 'pink';
@@ -138,7 +138,7 @@ const Mask = ({data,canvasProps}) => {
     }
   },[data.fileCoverage])
   return <div className={'mark'} style={{left:positionLeft+'px',top:positionTop+'px'}}>
-    <canvas id={'cavsElem'} style={{opacity:'1'}}>
+    <canvas id={'canvas'} style={{opacity:'1'}}>
       你的浏览器不支持canvas，请升级浏览器
     </canvas>
   </div>

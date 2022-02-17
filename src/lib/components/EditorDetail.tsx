@@ -2,7 +2,6 @@ import {FC, useEffect, useState} from "react";
 import React from 'react';
 import {LeftLine} from "./LeftLine";
 import Mask from "./Mask";
-import {getDecode} from "../util";
 
 interface IProps {
   fileCoverage:any
@@ -37,8 +36,10 @@ const fileMap = [
   }
 ]
 
+// 核心方法
 function CoreFn({fileCoverage,fileDetail} ) {
   const {content} = fileDetail
+  // 1.转换成数组
   let rows = ['']
   let index = 0
   for (let i = 0; i < content.length; i++) {
@@ -52,9 +53,9 @@ function CoreFn({fileCoverage,fileDetail} ) {
   const maxWidth = JSON.parse(JSON.stringify(rows)).sort((a,b)=>-(a.length-b.length))[0].length
 
 
-  // console.log(fileCoverage,'fileCoverage')
 
 
+  // 获取numberOfRows
   // 获取行覆盖率
   function getLineCoverage(data:any) {
     const statementMap = data.statementMap;
@@ -77,25 +78,27 @@ function CoreFn({fileCoverage,fileDetail} ) {
   if (!lineStats) {
     return;
   }
-  const arr:any = []
+  // numberOfRows
+  const numberOfRows:any = []
   Object.entries(lineStats).forEach(([lineNumber, count]) => {
-    arr.push({lineNumber,count})
+    numberOfRows.push({lineNumber,count})
     // 这边计算出了行的次数！！！！！！
   });
+
+
+
+
+
   return {
-    times:arr,
+    times:numberOfRows,
     rows,
-    maxWidth:maxWidth,
-    maskCanvasProps:{
-      width:8.64 * maxWidth,
-      height: rows.length * 22
-    }
+    maxWidth,
   }
 }
 
 const EditorDetail:FC<IProps> = (props) => {
   const {fileCoverage,fileDetail} = props
-  const {maxWidth,maskCanvasProps,rows,times} = CoreFn({fileCoverage,fileDetail})
+  const {maxWidth,rows,times} = CoreFn({fileCoverage,fileDetail})
   const [showMask,setShowMask] = useState(false)
 
   useEffect(() => {
@@ -136,10 +139,7 @@ const EditorDetail:FC<IProps> = (props) => {
       <div style={{position:'relative'}}>
         <div id={'codemirror-editor'}/>
         {
-          showMask?<Mask canvasProps={{
-            width:maskCanvasProps.width,
-            height:maskCanvasProps.height,
-          }} data={{fileDetail,fileCoverage}}/>:null
+          showMask?<Mask rows={rows} edMaxWidth={maxWidth} data={{fileDetail,fileCoverage}}/>:null
         }
       </div>
     </div>
